@@ -1,0 +1,805 @@
+{
+  "info": {
+    "_postman_id": "f5a8b792-7c34-4bc3-95fa-2849187a54a0",
+    "name": "PlacementPro API - Complete RBAC & Groq ATS Suite",
+    "description": "Comprehensive Postman collection for testing the PlacementPro FastAPI backend. Includes strict Role-Based Access Control (Student, Recruiter, Admin), full CRUD operations for Profiles, Jobs, and Applications, and the Groq AI ATS Compatibility Scoring engine.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "student_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "recruiter_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "job_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "student_profile_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "recruiter_profile_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "application_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01. System & Health",
+      "item": [
+        {
+          "name": "Root Information",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            }
+          }
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Authentication & RBAC",
+      "item": [
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"aarav.student@placementpro.edu\",\n  \"password\": \"SecurePass123!\",\n  \"role\": \"student\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Register Recruiter",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"talent@techcorp.com\",\n  \"password\": \"RecruiterPass123!\",\n  \"role\": \"recruiter\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Register Admin / Placement Officer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"officer@placementpro.edu\",\n  \"password\": \"AdminOfficer2026!\",\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login Student (Auto-saves student_token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set('student_token', jsonData.access_token);",
+                  "    console.log('Saved student_token to collection variables');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"aarav.student@placementpro.edu\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Recruiter (Auto-saves recruiter_token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set('recruiter_token', jsonData.access_token);",
+                  "    console.log('Saved recruiter_token to collection variables');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"talent@techcorp.com\",\n  \"password\": \"RecruiterPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Admin (Auto-saves admin_token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set('admin_token', jsonData.access_token);",
+                  "    console.log('Saved admin_token to collection variables');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"officer@placementpro.edu\",\n  \"password\": \"AdminOfficer2026!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Current Authenticated User Identity",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Student Profiles",
+      "item": [
+        {
+          "name": "Create Student Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set('student_profile_id', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Aarav Sharma\",\n  \"roll_number\": \"CS2026-042\",\n  \"branch\": \"Computer Science and Engineering\",\n  \"cgpa\": 8.85,\n  \"graduation_year\": 2026,\n  \"skills\": [\"Python\", \"FastAPI\", \"PostgreSQL\", \"Docker\", \"AWS\"],\n  \"resume_text\": \"Final year Computer Science student with expertise in designing asynchronous microservices using FastAPI and SQLAlchemy. Experienced in indexing PostgreSQL databases and deploying containerized applications with Docker.\",\n  \"phone\": \"+91-9876543210\",\n  \"linkedin_url\": \"https://linkedin.com/in/aarav-sharma\",\n  \"github_url\": \"https://github.com/aaravsharma\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profiles/student",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "student"]
+            }
+          }
+        },
+        {
+          "name": "Get My Student Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/profiles/student/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "student", "me"]
+            }
+          }
+        },
+        {
+          "name": "Get Student Profile by ID (Recruiter or Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{recruiter_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/profiles/student/{{student_profile_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "student", "{{student_profile_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update My Student Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cgpa\": 9.05,\n  \"skills\": [\"Python\", \"FastAPI\", \"PostgreSQL\", \"Docker\", \"AWS\", \"Kubernetes\", \"Redis\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profiles/student/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "student", "me"]
+            }
+          }
+        },
+        {
+          "name": "Delete Student Profile (Admin / Owner)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/profiles/student/{{student_profile_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "student", "{{student_profile_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Recruiter Profiles",
+      "item": [
+        {
+          "name": "Create Recruiter Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set('recruiter_profile_id', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{recruiter_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company_name\": \"HyperScale Cloud Systems\",\n  \"company_website\": \"https://hyperscale.example.com\",\n  \"industry\": \"Cloud Infrastructure & AI Software\",\n  \"contact_person\": \"Vikram Adve\",\n  \"contact_phone\": \"+91-9123456789\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profiles/recruiter",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "recruiter"]
+            }
+          }
+        },
+        {
+          "name": "Get My Recruiter Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{recruiter_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/profiles/recruiter/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "recruiter", "me"]
+            }
+          }
+        },
+        {
+          "name": "Get Recruiter Profile by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/profiles/recruiter/{{recruiter_profile_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "recruiter", "{{recruiter_profile_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update My Recruiter Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{recruiter_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"industry\": \"Global Cloud & Enterprise AI Platforms\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profiles/recruiter/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "recruiter", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Job Postings",
+      "item": [
+        {
+          "name": "Create Job Posting (Recruiter Only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set('job_id', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{recruiter_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Backend Software Engineer - Cloud Platforms\",\n  \"description\": \"We are looking for motivated software engineering graduates proficient in Python, FastAPI, and PostgreSQL. You will design scalable distributed services, architect database schemas, write unit tests, and deploy microservices on Kubernetes.\",\n  \"location\": \"Bangalore, Karnataka\",\n  \"job_type\": \"Full-Time\",\n  \"ctc\": 18.5,\n  \"min_cgpa\": 7.5,\n  \"eligible_branches\": [\n    \"Computer Science and Engineering\",\n    \"Information Technology\",\n    \"Electronics and Communication\"\n  ],\n  \"required_skills\": [\n    \"Python\",\n    \"FastAPI\",\n    \"PostgreSQL\",\n    \"Docker\",\n    \"AWS\"\n  ],\n  \"application_deadline\": \"2026-12-31T23:59:59\",\n  \"is_active\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs"]
+            }
+          }
+        },
+        {
+          "name": "List All Jobs (No Filters)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs"]
+            }
+          }
+        },
+        {
+          "name": "Filter Jobs by Query Parameters (Location, CTC, Branch, Keyword)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs?location=Bangalore&min_ctc=15.0&branch=Computer+Science&search=Backend&skip=0&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs"],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "Bangalore"
+                },
+                {
+                  "key": "min_ctc",
+                  "value": "15.0"
+                },
+                {
+                  "key": "branch",
+                  "value": "Computer Science"
+                },
+                {
+                  "key": "search",
+                  "value": "Backend"
+                },
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Job Posting by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{job_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs", "{{job_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Job Posting (Owner Recruiter)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{recruiter_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ctc\": 20.0,\n  \"location\": \"Bangalore / Hybrid\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{job_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs", "{{job_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Job Posting (Owner Recruiter or Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{recruiter_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{job_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs", "{{job_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Job Applications",
+      "item": [
+        {
+          "name": "Apply for Job (Student with Eligibility Check)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set('application_id', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"job_id\": {{job_id}},\n  \"notes\": \"Strong passion for high-concurrency microservices, automated pipelines, and cloud database optimization.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/applications",
+              "host": ["{{baseUrl}}"],
+              "path": ["applications"]
+            }
+          }
+        },
+        {
+          "name": "List Applications (Role-Scoped)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/applications?skip=0&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["applications"],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Application Details by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{recruiter_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/applications/{{application_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["applications", "{{application_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Application Status (Recruiter / Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{recruiter_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"shortlisted\",\n  \"recruiter_feedback\": \"Excellent academic record and strong matching skill set in FastAPI and relational databases. Moving to technical interview stage.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/applications/{{application_id}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["applications", "{{application_id}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Withdraw Application (Student Owner or Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/applications/{{application_id}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["applications", "{{application_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. Groq AI ATS Compatibility Scoring",
+      "item": [
+        {
+          "name": "Evaluate Student ATS Compatibility Score via Groq LLM",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"job_id\": {{job_id}},\n  \"student_id\": {{student_profile_id}},\n  \"custom_resume_text\": \"Lead Backend Developer with hands-on experience developing low-latency APIs with FastAPI and PostgreSQL. Implemented Docker containerization and CI/CD pipelines. Maintained a 9.05 CGPA in Computer Science.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ats/evaluate",
+              "host": ["{{baseUrl}}"],
+              "path": ["ats", "evaluate"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
