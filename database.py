@@ -34,7 +34,13 @@ else:
 
 engine_kwargs = {"echo": False}
 
-sqlite_url = "sqlite:///./placementpro.db"
+if os.environ.get("VERCEL"):
+    sqlite_url = "sqlite:////tmp/placementpro.db"
+    if "///./" in db_url:
+        db_url = db_url.replace("///./", "////tmp/")
+else:
+    sqlite_url = "sqlite:///./placementpro.db"
+
 sqlite_engine = create_engine(sqlite_url, connect_args={"check_same_thread": False})
 SqliteSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=sqlite_engine)
 

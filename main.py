@@ -89,7 +89,7 @@ app.add_middleware(
         "http://localhost:8000",
         "http://127.0.0.1:8000",
     ],
-    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:[0-9]+)?",
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$|^https://.*\.vercel\.app$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -161,6 +161,11 @@ app.include_router(api_router)
     summary="API Root Information",
     status_code=status.HTTP_200_OK
 )
+@app.get(
+    "/api",
+    tags=["System Status"],
+    include_in_schema=False
+)
 def root():
     return {
         "app": settings.APP_NAME,
@@ -178,6 +183,11 @@ def root():
     tags=["System Status"],
     summary="Health Check",
     status_code=status.HTTP_200_OK
+)
+@app.get(
+    "/api/health",
+    tags=["System Status"],
+    include_in_schema=False
 )
 def health_check():
     db_connected = False

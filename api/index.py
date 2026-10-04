@@ -8,4 +8,5 @@ if project_root not in sys.path:
 
 from main import app
 
-# Vercel's Python runtime detects 'app' as the ASGI application entry point
+# Vercel's Python runtime detects 'app' or 'handler' as the ASGI application entry point
+handler = app
